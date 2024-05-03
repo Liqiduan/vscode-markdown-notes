@@ -39,6 +39,16 @@ export class MarkdownDefinitionProvider implements vscode.DefinitionProvider {
       const path = await MarkdownDefinitionProvider.createMissingNote(ref);
       if (path !== undefined) {
         files.push(vscode.Uri.file(path));
+        if (ref.range) {
+          const wikiLink = NoteWorkspace.wikiLinkCompletionForConvention(
+            vscode.Uri.file(path),
+            document
+          );
+          const edit = new vscode.WorkspaceEdit();
+          edit.replace(document.uri, ref.range, wikiLink);
+          vscode.workspace.applyEdit(edit);
+
+        }
       }
     }
 
